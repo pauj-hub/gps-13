@@ -1,37 +1,29 @@
 name: Python Application CI
 
-# Quan s'executa? Quan fem push o un pull request
 on: [push, pull_request]
 
 jobs:
   build:
-    # 1. Imatge base (Ubuntu amb entorn per Docker)
     runs-on: ubuntu-latest
 
     steps:
-    # Baixar el teu codi al servidor
     - uses: actions/checkout@v3
 
-    # 2. Configurar Python (Imatge de Python)
     - name: Set up Python 3.9
       uses: actions/setup-python@v3
       with:
         python-version: "3.9"
 
-    # 3. Instal·lar dependencies (requirements + pylint + coverage)
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pylint coverage
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    # 4. Passar analitzador estàtic (Pylint)
-    # Nota: El "|| true" és perquè no falli tot el procés si troba un petit error d'estil
     - name: Analysing code with pylint
       run: |
         pylint main.py test.py || true
 
-    # 5. Executar test i el seu coverage
     - name: Run tests and coverage
       run: |
         coverage run test.py
